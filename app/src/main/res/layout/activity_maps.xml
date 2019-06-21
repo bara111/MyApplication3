@@ -18,7 +18,7 @@
 
             android:layout_gravity="top"
             android:layout_marginBottom="5dp"
-            android:layout_weight="0.25"
+            android:layout_weight="0.15"
             android:text="Cloudy"
             android:textAlignment="center"
             android:textColor="#ffff"
@@ -31,7 +31,31 @@
 
             android:layout_gravity="top"
             android:layout_marginBottom="5dp"
-            android:layout_weight="0.25"
+            android:layout_weight="0.15"
+            android:text="Cloudy"
+            android:textAlignment="center"
+            android:textColor="#ffff"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/city1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="top"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.30"
+            android:text="Cloudy"
+            android:textAlignment="center"
+            android:textColor="#ffff"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/condition"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="top"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.30"
             android:text="Cloudy"
             android:textAlignment="center"
             android:textColor="#ffff"
@@ -40,6 +64,7 @@
         <ProgressBar
             android:id="@+id/progress_circular"
             android:layout_width="0dp"
+
             android:layout_weight="1500"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

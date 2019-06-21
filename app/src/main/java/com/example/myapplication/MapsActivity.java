@@ -23,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -43,7 +44,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private TextView textView, textView1;
+    private TextView textView, textView1, textView2, textView3;
     private ProgressBar progressBar;
     private GoogleMap mMap;
 
@@ -53,14 +54,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         textView = findViewById(R.id.longLAT);
         textView1 = findViewById(R.id.city);
-        progressBar= findViewById(R.id.progress_circular);
+        textView2 = findViewById(R.id.city1);
+        textView3 = findViewById(R.id.condition);
+        progressBar = findViewById(R.id.progress_circular);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
     }
-    private void FetchWeather(int lat,int lon) {
+
+    private void FetchWeather(final double lat, final double lon) {
 
         progressBar.setVisibility(View.VISIBLE);
         textView.setVisibility(View.GONE);
@@ -75,12 +79,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .enqueue(new Callback<WeatherResponse>() {
                     @Override
                     public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                        String temp=response.body().getmMain().getmTemp().toString();
+                        String temp = response.body().getmMain().getmTemp().toString();
+                        String city = response.body().getCountry();
+                        String condition = response.body().getmWeather().get(0).getmDescription();
+                        Double tempInt = Double.parseDouble(temp);
+                        tempInt = tempInt - 273;
+
+                        String Cel = "" + tempInt.intValue();
                         textView.setVisibility(View.VISIBLE);
                         textView1.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.GONE);
 
-                        textView1.setText( temp);
+                        textView1.setText(Cel);
+                        textView3.setText(condition);
+                        if (!city.equals("")) {
+                            textView2.setText(city);
+
+                        } else {
+                            textView2.setText("Unknown");
+                        }
+
+                        LatLng sydney = new LatLng(lat, lon);
+                        MarkerOptions marker = new MarkerOptions().position(sydney).title(condition);
+
+                        if (condition.equals("clear sky")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.clear_sky));
+
+                        } else if (condition.equals("few clouds")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.few_clouds));
+
+                        } else if (condition.equals("scattered clouds")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.scattered_clouds));
+
+                        } else if (condition.equals("broken clouds")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.broken_clouds));
+
+                        } else if (condition.equals("shower rain")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shower_rain));
+
+                        } else if (condition.equals("rain")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.rain));
+
+                        } else if (condition.equals("thunderstorm")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.thunderstorm));
+
+                        } else if (condition.equals("snow")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.snow));
+
+                        } else if (condition.equals("mist")) {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mist));
+
+                        }
+                        mMap.addMarker(marker);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(sydney));
                     }
 
                     @Override
@@ -90,10 +141,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
 
     }
-
-
-
-
 
 
     @Override
@@ -106,60 +153,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
                 int Lat = (int) latLng.latitude;
                 int Long = (int) latLng.longitude;
-                FetchWeather(Lat,Long);
+                FetchWeather(latLng.latitude, latLng.longitude);
                 mMap.clear();
                 String LongLat = "" + Lat + "," + Long;
                 textView.setText(LongLat);
 
-                LatLng sydney = new LatLng(Lat, Long);
-                mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(sydney));
-/*
-               find_weather(Lat,Long);
-*/
+
             }
         });
-        // Add a marker in Sydney and move the camera
 
     }
 
 
-   /* public void find_weather(int lat, int lon) {
-        String url = "https://samples.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=829740af696dc0258609d2d0a6a8472a";
-
-        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject main_object = response.getJSONObject("main");
-                    JSONArray array = response.getJSONArray("weather");
-                    String temp = String.valueOf(main_object.getDouble("temp"));
-                    //String country = response.getString("country");
-
-                    double temp_int = Double.parseDouble(temp);
-                    double centi = (temp_int - 32) / 1.8000;
-                    centi = Math.round(centi);
-                    int i = (int) centi;
-                    String Temp = "" + i;
-                    //textView1.setText(country);
-
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("error", null);
-            }
-        }
-        );
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(jor);
-
-
-    }*/
 }
