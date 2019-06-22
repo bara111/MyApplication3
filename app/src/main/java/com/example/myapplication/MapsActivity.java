@@ -81,7 +81,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                         String temp = response.body().getmMain().getmTemp().toString();
                         String city = response.body().getCountry();
-                        String condition = response.body().getmWeather().get(0).getmDescription();
+                        String condition = response.body().getmWeather().get(0).getmMain();
                         Double tempInt = Double.parseDouble(temp);
                         tempInt = tempInt - 273;
 
@@ -102,31 +102,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         LatLng sydney = new LatLng(lat, lon);
                         MarkerOptions marker = new MarkerOptions().position(sydney).title(condition);
 
-                        if (condition.equals("clear sky")) {
+                        if (condition.equals("Clear")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.clear_sky));
 
-                        } else if (condition.equals("few clouds")) {
+                        } else if (condition.equals("Clouds")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.few_clouds));
 
-                        } else if (condition.equals("scattered clouds")) {
+                        } else if (condition.equals("scattered clouds")||condition.equals("overcast clouds")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.scattered_clouds));
 
                         } else if (condition.equals("broken clouds")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.broken_clouds));
 
-                        } else if (condition.equals("shower rain")) {
+                        } else if (condition.equals("Drizzle")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shower_rain));
 
-                        } else if (condition.equals("rain")) {
+                        } else if (condition.equals("Rain")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.rain));
 
-                        } else if (condition.equals("thunderstorm")) {
+                        } else if (condition.equals("Thunderstorm")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.thunderstorm));
 
-                        } else if (condition.equals("snow")) {
+                        } else if (condition.equals("Snow")||condition.equals("light snow")||condition.equals("Heavy snow")||condition.equals("Sleet")||condition.equals("Light shower sleet")||condition.equals("Shower sleet")||condition.equals("Light rain and snow")||condition.equals("Rain and snow")||condition.equals("Light shower snow")||condition.equals("Shower snow")||condition.equals("Heavy shower snow")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.snow));
 
-                        } else if (condition.equals("mist")) {
+                        } else if (condition.equals("mist")||condition.equals("dust")||condition.equals("fog")||condition.equals("sand")||condition.equals("squalls")||condition.equals("tornado")||condition.equals("volcanic ash")||condition.equals("Haze")) {
                             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.mist));
 
                         }
